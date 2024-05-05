@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { Avatar, Button } from "@material-tailwind/react";
 
 
 const Navbar = () => {
@@ -41,12 +42,20 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <div className="md:col-span-3">
-          <NavLink className=''>
-            <img src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg" alt="" className='rounded-[50%] w-[45px] border-2 border-gray-500 ' />
+        <div className="md:col-span-3 flex justify-between">
+          <NavLink className='md:mx-2'>
+            <Avatar
+              src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg"
+              alt="avatar"
+              withBorder={true}
+              color="blue"
+              className="p-0.5"
+            />
+            {/* <img src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg" alt="" className='rounded-[50%] w-[45px] border-2 border-gray-500 ' /> */}
           </NavLink>
           
-          
+          <Button variant='gradient'>Contact Us</Button>
+          <Button variant='gradient'>Logout</Button>
         </div>
       </div>
     </nav>
