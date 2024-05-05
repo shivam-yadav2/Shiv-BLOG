@@ -5,7 +5,7 @@ import { Avatar, Button } from "@material-tailwind/react";
 
 const Navbar = () => {
   return (
-    <nav className='w-full shadow-lg shadow-gray-900'>
+    <nav className='w-full shadow-lg shadow-gray-900 fixed top-0 z-10 bg-black opacity-90 '>
       <div className="grid grid-cols-12 sm:px-5 md:py-4 sm:py-2 md:px-8 ">
         <div className="md:col-span-2 border-gray-600 border-e-2">
           <NavLink to={"/"} className='flex items-end'>
