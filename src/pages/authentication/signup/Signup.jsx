@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 function Signup() {
 
   return (
-    <div classname="w-full h-[100vh]">
+    <div className="w-full h-[100vh]">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto">
         <div className="relative px-4 py-10 bg-black mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
           <h1 classname="text-4xl ">Sign Up</h1>
