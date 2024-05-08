@@ -1,5 +1,5 @@
 import React from 'react'
-import MyContext from './myContext';
+import MyContext from './MyContext';
 
 function MyState(props) {
     const state = {
