@@ -1,15 +1,76 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { auth} from '../../../firebase/fire';
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import React, { useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify';
 
 function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate()
+
+
+  const handelLogin = async (e) => {
+    e.preventDefault();
+
+    if (email === "" || password === "") {
+      toast.warning("All fields are required")
+    } else {
+      // ==================Login =====================
+
+      try {
+        const loginUser = await signInWithEmailAndPassword(auth, email, password)
+        toast.success("Login SuccessFully")
+        navigate('/')
+      } catch (error) {
+        console.log(error)
+        toast.error(error.message)
+      }
+    }
+  }
+
+  const googleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        console.log(credential)
+        const token = credential.accessToken;
+
+        // =============== access token to Cookkies =========== 
+        Cookies.set('accessToken', token, { expires: 1 })
+
+        const user = result.user;
+        console.log(user)
+
+        toast.success("Account Created SuccessFully")
+
+        //  ==================== Naviagate to Login Page ====================
+
+        navigate('/')
+
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        toast.error(errorMessage)
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
   return (
     <div>
       <div className="flex flex-col items-center justify-center h-screen dark">
         <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-6">
           <h2 className="text-4xl font-bold text-gray-200 mb-4">Login</h2>
-          <form className="flex flex-col">
-            <input placeholder="Email address" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="email" />
-            <input placeholder="Password" className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="password" />
+          <form className="flex flex-col" onSubmit={handelLogin}>
+            <input placeholder="Email address" value={email} onChange={(e)=>setEmail(e.target.value)} className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="email" />
+            <input placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150" type="password" />
             <div className="flex items-center justify-between flex-wrap">
               <label className="text-sm text-gray-200 cursor-pointer" htmlFor="remember-me">
                 <input className="mr-2" id="remember-me" type="checkbox" />
@@ -18,11 +79,11 @@ function Login() {
               <a className="text-sm text-blue-500 hover:underline mb-0.5" href="#">Forgot password?</a>
               <p className="text-white mt-4"> Don't have an account? <NavLink to='/signup' className="text-sm text-blue-500 -200 hover:underline mt-4">Signup</NavLink></p>
             </div>
-            <button className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150" type="submit">Login</button>
+            <button  className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-indigo-600 hover:to-blue-600 transition ease-in-out duration-150" type="submit">Login</button>
           </form>
           <div className="flex justify-center items-center mt-3">
             <div>
-              <button className="flex items-center justify-center py-2 px-20 bg-white hover:bg-gray-200 focus:ring-blue-500 focus:ring-offset-blue-200 text-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">
+              <button onClick={googleLogin} className="flex items-center justify-center py-2 px-20 bg-white hover:bg-gray-200 focus:ring-blue-500 focus:ring-offset-blue-200 text-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">
                 <svg viewBox="0 0 24 24" height={25} width={25} y="0px" x="0px" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12,5c1.6167603,0,3.1012573,0.5535278,4.2863159,1.4740601l3.637146-3.4699707 C17.8087769,1.1399536,15.0406494,0,12,0C7.392395,0,3.3966675,2.5999146,1.3858032,6.4098511l4.0444336,3.1929321 C6.4099731,6.9193726,8.977478,5,12,5z" fill="#F44336" />
                   <path d="M23.8960571,13.5018311C23.9585571,13.0101929,24,12.508667,24,12 c0-0.8578491-0.093689-1.6931763-0.2647705-2.5H12v5h6.4862061c-0.5247192,1.3637695-1.4589844,2.5177612-2.6481934,3.319458 l4.0594482,3.204834C22.0493774,19.135437,23.5219727,16.4903564,23.8960571,13.5018311z" fill="#2196F3" />

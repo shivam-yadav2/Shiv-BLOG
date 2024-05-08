@@ -1,9 +1,9 @@
 import { auth, fireDb } from '../../../firebase/fire';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Cookies } from 'js-cookie'
+import  Cookies  from 'js-cookie'
 import { addDoc, collection } from 'firebase/firestore';
 
 function Signup() {
@@ -23,6 +23,8 @@ function Signup() {
       }
     )
   });
+
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +49,8 @@ function Signup() {
 
         // ================= Creating New User ================ 
         const createAcc = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+
+        // =============== access token to Cokies =========== 
         Cookies.set('accessToken', createAcc.user.accessToken, { expires: 1 })
 
         // ================ Adding users to firestore ===========
@@ -55,11 +59,50 @@ function Signup() {
         await addDoc(docRef, formData)
 
         toast.success("Account Created SuccessFully")
+        //  ==================== Naviagate to Login Page ====================
+
+        navigate('/login')
       } catch (error) {
         console.log(error)
         toast.error(error.message)
       }
     }
+  }
+
+  const googleSignup = async () => {
+
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        console.log(credential)
+        const token = credential.accessToken;
+        
+        // =============== access token to Cookkies =========== 
+        Cookies.set('accessToken', token, { expires: 1 })
+
+        const user = result.user;
+        console.log(user)
+
+        toast.success("Account Created SuccessFully")
+
+        //  ==================== Naviagate to Login Page ====================
+
+        navigate('/')
+
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        toast.error(errorMessage)
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
   }
 
   return (
@@ -144,7 +187,7 @@ function Signup() {
               </div>
               <div className="flex justify-center items-center">
                 <div>
-                  <button className="flex items-center justify-center py-2 px-20 bg-white hover:bg-gray-200 focus:ring-blue-500 focus:ring-offset-blue-200 text-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">
+                  <button onClick={googleSignup} className="flex items-center justify-center py-2 px-20 bg-white hover:bg-gray-200 focus:ring-blue-500 focus:ring-offset-blue-200 text-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">
                     <svg viewBox="0 0 24 24" height={25} width={25} y="0px" x="0px" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12,5c1.6167603,0,3.1012573,0.5535278,4.2863159,1.4740601l3.637146-3.4699707 C17.8087769,1.1399536,15.0406494,0,12,0C7.392395,0,3.3966675,2.5999146,1.3858032,6.4098511l4.0444336,3.1929321 C6.4099731,6.9193726,8.977478,5,12,5z" fill="#F44336" />
                       <path d="M23.8960571,13.5018311C23.9585571,13.0101929,24,12.508667,24,12 c0-0.8578491-0.093689-1.6931763-0.2647705-2.5H12v5h6.4862061c-0.5247192,1.3637695-1.4589844,2.5177612-2.6481934,3.319458 l4.0594482,3.204834C22.0493774,19.135437,23.5219727,16.4903564,23.8960571,13.5018311z" fill="#2196F3" />
