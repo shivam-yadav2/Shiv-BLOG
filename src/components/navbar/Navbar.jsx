@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Avatar, Button } from "@material-tailwind/react";
 
 
 const Navbar = () => {
+  const [loginStatus, setLoginStatus] = useState(false)
   return (
     <nav className='w-full shadow-lg shadow-gray-900 fixed top-0 z-10 bg-black opacity-90 '>
       <div className="grid grid-cols-12 sm:px-5 md:py-4 sm:py-2 md:px-8 ">
@@ -42,20 +43,39 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <div className="md:col-span-3 flex justify-between">
-          <NavLink className='md:mx-2'>
-            <Avatar
-              src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg"
-              alt="avatar"
-              withBorder={true}
-              color="blue"
-              className="p-0.5"
-            />
-            {/* <img src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg" alt="" className='rounded-[50%] w-[45px] border-2 border-gray-500 ' /> */}
-          </NavLink>
+        <div className="md:col-span-3 flex gap-1 justify-between md:ps-3 items-center">
+          {
+            loginStatus ? <NavLink className='md:mx-2'>
+              <Avatar
+                src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg"
+                alt="avatar"
+                withBorder={true}
+                color="blue"
+                className="p-0.5"
+              />
+
+              {/* <img src="https://t4.ftcdn.net/jpg/02/44/43/69/240_F_244436923_vkMe10KKKiw5bjhZeRDT05moxWcPpdmb.jpg" alt="" className='rounded-[50%] w-[45px] border-2 border-gray-500 ' /> */}
+            </NavLink> :
+              <NavLink to={'/signup'}>
+                <Button className='md:px-4' color='blue' >Sign Up</Button>
+              </NavLink>
+          }
+
+          {
+            !loginStatus && <NavLink to={'/login'}>
+              <Button className='md:px-4' color='blue' >Sign In</Button>
+            </NavLink>
+          }
+
+
+
+          <Button variant='gradient' >Contact Us</Button>
+          {
+            loginStatus && 
+            <Button variant='gradient'>Logout</Button>
+
           
-          <Button variant='gradient'>Contact Us</Button>
-          <Button variant='gradient'>Logout</Button>
+          }
         </div>
       </div>
     </nav>
